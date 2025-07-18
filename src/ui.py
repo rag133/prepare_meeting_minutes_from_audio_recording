@@ -17,7 +17,7 @@ class MeetingMinutesGenerator:
             if transcription_model == "OpenAI Whisper API":
                 transcription = transcribe_openai_api(self.openai_client, audio_file, 
                     lambda p, desc: progress(p * 0.4, desc))
-            elif transcription_model == "Google Gemini":
+            elif transcription_model == "Google Gemini 2.5 Flash":
                 transcription = transcribe_with_gemini(audio_file,
                     lambda p, desc: progress(p * 0.4, desc))
             else:
@@ -106,9 +106,13 @@ def create_interface():
             with gr.Column(scale=2):
                 with gr.Tabs():
                     with gr.TabItem("📋 Meeting Minutes"):
-                        minutes_output = gr.Markdown(
+                        minutes_output = gr.Textbox(
                             label="Generated Meeting Minutes",
-                            value="Upload an audio file and click 'Generate Meeting Minutes' to see results here."
+                            value="Upload an audio file and click 'Generate Meeting Minutes' to see results here.",
+                            lines=15,
+                            max_lines=20,
+                            interactive=False,
+                            show_copy_button=True
                         )
                     
                     with gr.TabItem("📝 Full Transcription"):

@@ -1,14 +1,14 @@
 import gradio as gr
-from .transcription import transcribe_openai_api, transcribe_with_gemini
-from .summarization import summarize_with_llama, summarize_with_ollama, summarize_with_gemini
-from .config import get_device, setup_api_clients
+from transcription import transcribe_openai_api, transcribe_with_gemini
+from summarization import summarize_with_llama, summarize_with_ollama, summarize_with_gemini
+from config import get_device, setup_api_clients
 
 class MeetingMinutesGenerator:
     def __init__(self):
         self.device = get_device()
         self.openai_client = setup_api_clients()
 
-    def process_meeting(self, audio_file, transcription_model, summarization_model, progress=gr.Progress()):
+    def process_meeting(self, audio_file, transcription_model, summarization_model, context_input, progress=gr.Progress()):
         """Main processing function"""
         try:
             # Step 1: Transcription
@@ -27,13 +27,13 @@ class MeetingMinutesGenerator:
             
             # Step 2: Summarization
             if summarization_model == "Llama 3.1 8B (Local)":
-                summary = summarize_with_llama(transcription, self.device,
+                summary = summarize_with_llama(transcription, context_input, self.device,
                     lambda p, desc: progress(0.4 + p * 0.6, desc))
             elif summarization_model == "Ollama (qwen2.5:latest)":
-                summary = summarize_with_ollama(transcription,
+                summary = summarize_with_ollama(transcription, context_input,
                     lambda p, desc: progress(0.4 + p * 0.6, desc))
             elif summarization_model == "Google Gemini 2.0 Flash":
-                summary = summarize_with_gemini(transcription,
+                summary = summarize_with_gemini(transcription, context_input,
                     lambda p, desc: progress(0.4 + p * 0.6, desc))
             else:
                 raise ValueError(f"Unknown summarization model: {summarization_model}")
@@ -65,21 +65,10 @@ def create_interface():
         # 🎤 Meeting Minutes Generator
         
         Upload an audio file and generate professional meeting minutes using AI models.
-        
-        **Setup Requirements:**
-        - For OpenAI: Set `OPENAI_API_KEY` in your .env file
-        - For Gemini: Set `GEMINI_API_KEY` in your .env file  
-        - For HuggingFace models: Set `HF_TOKEN` in your .env file
-        - For Ollama: Ensure Ollama is running with qwen2.5:latest model
         """)
         
         with gr.Row():
             with gr.Column(scale=1):
-                audio_input = gr.Audio(
-                    label="Upload Meeting Audio",
-                    type="filepath"
-                )
-                
                 transcription_model = gr.Dropdown(
                     choices=["Google Gemini", "OpenAI Whisper API"],
                     value="Google Gemini",
@@ -96,6 +85,17 @@ def create_interface():
                     value="Google Gemini 2.0 Flash",
                     label="Summarization Model",
                     info="Choose which model to generate meeting minutes"
+                )
+
+                audio_input = gr.Audio(
+                    label="Upload Meeting Audio",
+                    type="filepath"
+                )
+                
+                context_input = gr.Textbox(
+                    label="Additional Context for Summarization (Optional)",
+                    placeholder="e.g., Key discussion points, attendees, specific topics to focus on...",
+                    lines=3
                 )
                 
                 process_btn = gr.Button(
@@ -122,7 +122,7 @@ def create_interface():
         # Event handler
         process_btn.click(
             fn=generator.process_meeting,
-            inputs=[audio_input, transcription_model, summarization_model],
+            inputs=[audio_input, transcription_model, summarization_model, context_input],
             outputs=[minutes_output, transcription_output],
             show_progress=True
         )

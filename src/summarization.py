@@ -4,7 +4,7 @@ import requests
 import google.generativeai as genai
 from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
 
-def summarize_with_llama(transcription, device, progress=None):
+def summarize_with_llama(transcription, context, device, progress=None):
     """Summarize using Llama model"""
     if progress:
         progress(0.1, "Loading Llama model...")
@@ -38,6 +38,8 @@ def summarize_with_llama(transcription, device, progress=None):
     try:
         system_message = "You are an assistant that produces minutes of meetings from transcripts, with summary, key discussion points, takeaways and action items with owners, in markdown."
         user_prompt = f"Below is a transcript of a meeting. Please write minutes in markdown, including a summary with attendees, location and date; discussion points; takeaways; and action items with owners.\n\n{transcription}"
+        if context:
+            user_prompt += f"\n\nAdditional Context: {context}"
         
         messages = [
             {"role": "system", "content": system_message},
@@ -71,7 +73,7 @@ def summarize_with_llama(transcription, device, progress=None):
     except Exception as e:
         raise Exception(f"Llama summarization failed: {str(e)}")
 
-def summarize_with_ollama(transcription, progress=None):
+def summarize_with_ollama(transcription, context, progress=None):
     """Summarize using Ollama with qwen2.5:latest"""
     if progress:
         progress(0.1, "Connecting to Ollama...")
@@ -81,6 +83,8 @@ def summarize_with_ollama(transcription, progress=None):
         
         system_message = "You are an assistant that produces minutes of meetings from transcripts, with summary, key discussion points, takeaways and action items with owners, in markdown."
         user_prompt = f"Below is a transcript of a meeting. Please write minutes in markdown, including a summary with attendees, location and date; discussion points; takeaways; and action items with owners.\n\n{transcription}"
+        if context:
+            user_prompt += f"\n\nAdditional Context: {context}"
         
         payload = {
             "model": "qwen2.5:latest",
@@ -107,7 +111,7 @@ def summarize_with_ollama(transcription, progress=None):
     except Exception as e:
         raise Exception(f"Ollama summarization failed: {str(e)}")
 
-def summarize_with_gemini(transcription, progress=None):
+def summarize_with_gemini(transcription, context, progress=None):
     """Summarize using Google Gemini 2.0 Flash"""
     if progress:
         progress(0.1, "Connecting to Google Gemini...")
@@ -119,7 +123,10 @@ def summarize_with_gemini(transcription, progress=None):
 
 Below is a transcript of a meeting. Please write minutes in markdown, including a summary with attendees, location and date; discussion points; takeaways; and action items with owners.
 
-{transcription}"""
+{transcription}
+"""
+        if context:
+            prompt += f"Additional Context: {context}"
         
         if progress:
             progress(0.3, "Generating with Gemini...")

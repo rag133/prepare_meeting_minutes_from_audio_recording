@@ -5,6 +5,7 @@ This application transcribes an audio file of a meeting and generates profession
 ## Features
 
 - **Audio Transcription:** Convert spoken words from your meeting recordings into text.
+- **Additional Context:** Provide additional context as text for meeting minutes generation.
 - **Meeting Summarization:** Generate concise and informative meeting minutes, including a summary, key discussion points, takeaways, and action items.
 - **Model Selection:** Choose from a range of transcription and summarization models to find the best fit for your needs.
 
@@ -59,7 +60,7 @@ Run the application with the following command:
 python src/main.py
 ```
 
-This will launch a Gradio interface in your web browser. You can then upload an audio file, select the transcription and summarization models, and generate the meeting minutes.
+This will launch a Gradio interface in your web browser. You can then select your desired transcription and summarization models, upload an audio file, provide additional context (optional), and generate the meeting minutes.
 
 ## Credits
 This project was inspired by the LLM Engineering course by Edward Donnor.

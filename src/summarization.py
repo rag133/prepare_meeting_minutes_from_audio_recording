@@ -112,12 +112,12 @@ def summarize_with_ollama(transcription, context, progress=None):
         raise Exception(f"Ollama summarization failed: {str(e)}")
 
 def summarize_with_gemini(transcription, context, progress=None):
-    """Summarize using Google Gemini 2.0 Flash"""
+    """Summarize using Google Gemini 2.5 Flash"""
     if progress:
         progress(0.1, "Connecting to Google Gemini...")
     
     try:
-        model = genai.GenerativeModel('gemini-2.0-flash-exp')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         
         prompt = f"""You are an assistant that produces minutes of meetings from transcripts, with summary, key discussion points, takeaways and action items with owners, in markdown.
 

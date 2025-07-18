@@ -32,7 +32,7 @@ class MeetingMinutesGenerator:
             elif summarization_model == "Ollama (qwen2.5:latest)":
                 summary = summarize_with_ollama(transcription, context_input,
                     lambda p, desc: progress(0.4 + p * 0.6, desc))
-            elif summarization_model == "Google Gemini 2.0 Flash":
+            elif summarization_model == "Google Gemini 2.5 Flash":
                 summary = summarize_with_gemini(transcription, context_input,
                     lambda p, desc: progress(0.4 + p * 0.6, desc))
             else:
@@ -70,8 +70,8 @@ def create_interface():
         with gr.Row():
             with gr.Column(scale=1):
                 transcription_model = gr.Dropdown(
-                    choices=["Google Gemini", "OpenAI Whisper API"],
-                    value="Google Gemini",
+                    choices=["Google Gemini 2.5 Flash", "OpenAI Whisper API"],
+                    value="Google Gemini 2.5 Flash",
                     label="Transcription Model",
                     info="Choose how to convert speech to text"
                 )
@@ -80,9 +80,9 @@ def create_interface():
                     choices=[
                         "Llama 3.1 8B (Local)",
                         "Ollama (qwen2.5:latest)", 
-                        "Google Gemini 2.0 Flash"
+                        "Google Gemini 2.5 Flash"
                     ],
-                    value="Google Gemini 2.0 Flash",
+                    value="Google Gemini 2.5 Flash",
                     label="Summarization Model",
                     info="Choose which model to generate meeting minutes"
                 )

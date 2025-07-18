@@ -1,6 +1,6 @@
 import torch
-from .ui import create_interface
-from .config import load_environment_variables, get_device
+from ui import create_interface
+from config import load_environment_variables, get_device
 
 def main():
     """Main function to launch the application"""

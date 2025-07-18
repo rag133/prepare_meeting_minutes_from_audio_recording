@@ -41,7 +41,7 @@ def transcribe_with_gemini(audio_file, progress=None):
         if progress:
             progress(0.5, "Audio uploaded, starting Gemini transcription...")
 
-        model = genai.GenerativeModel(model_name="models/gemini-1.5-flash")
+        model = genai.GenerativeModel(model_name="models/gemini-2.5-flash")
         response = model.generate_content(["Please transcribe this audio.", audio_file_uploaded])
         
         if progress:
